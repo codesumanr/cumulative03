@@ -1,0 +1,120 @@
+﻿@page
+@model cumulative01.Views.CoursePage.EditModel
+
+ @if (Model.CourseId > 0)
+    {
+        <h2 class="text-center mb-4">Edit Course Details</h2>
+
+        <!-- Navigation back to course list -->
+        <nav class="mb-4">
+            <a class="nav-link" href="/CoursePage/List">Back To Courses</a>
+        </nav>
+
+        <!-- Edit Course Form-->
+        <form id="course-form" method="POST" action="/CoursePage/Create" class="container shadow-lg p-5 m-4 bg-light rounded">
+            <!-- Course Code Input Field-->
+            <div class="mb-3">
+                <label for="CourseCode" class="form-label">Course Code</label>
+                <input type="text" name="CourseCode" id="CourseCode" class="form-control" value="@Model.CourseCode" />
+                <div id="coursecode-error"></div>
+            </div>
+
+            <!-- Teacher ID Input Field-->
+            <div class="mb-3">
+                <label for="TeacherId" class="form-label">Teacher Id</label>
+                <input type="number" name="TeacherId" id="TeacherId" class="form-control" value="@Model.TeacherId" />
+                <div id="teacherid-error"></div>
+            </div>
+
+            <!-- Start Date Input Field-->
+            <div class="mb-3">
+                <label for="StartDate" class="form-label">Start Date</label>
+                <input type="date" name="StartDate" id="StartDate" class="form-control" value="@DateTime.Parse(Model.StartDate).ToString("yyyy-MM-dd")" />
+                <div id="startdate-error"></div>
+            </div>
+
+            <!-- Finish Date Input Field-->
+            <div class="mb-3">
+                <label for="FinishDate" class="form-label">Finish Date</label>
+                <input type="date" name="FinishDate" id="FinishDate" class="form-control" value="@DateTime.Parse(Model.FinishDate).ToString("yyyy-MM-dd")" />
+                <div id="finishdate-error"></div>
+            </div>
+
+            <!-- Course Name Input Field-->
+            <div class="mb-3">
+                <label for="CourseName" class="form-label">Course Name</label>
+                <input type="text" name="CourseName" id="CourseName" class="form-control" value="@Model.CourseName" />
+                <div id="coursename-error"></div>
+            </div>
+
+            <!-- Submit Button-->
+            <div class="text-center">
+                <input type="submit" value="Edit Course" class="btn btn-warning btn-lg" />
+            </div>
+        </form>
+    }
+    else
+    {
+        <!-- Error Message if Update Fails -->
+        <h1 class="text-center text-danger">Update Failed</h1>
+        <p class="text-center">Course Id - @ViewData["Id"] not found. Update cannot be performed.</p>
+    }
+
+    <!-- JavaScript Validation Script -->
+    @*
+<script> 
+    // Attach event listener to the form for submit event
+    document.getElementById("course-form").addEventListener("submit", function (event){
+
+        // Get the input field values
+        const courseCode = document.getElementById("CourseCode").value.trim();
+        const teacherId = document.getElementById("TeacherId").value.trim();
+        const startDate = document.getElementById("StartDate").value.trim();
+        const finishDate = document.getElementById("FinishDate").value.trim();
+        const courseName = document.getElementById("CourseName").value.trim();
+
+        // Get the error message elements
+        var courseCodeError = document.getElementById("coursecode-error");
+        var teacherIdError = document.getElementById("teacherid-error");
+        var startDateError = document.getElementById("startdate-error");
+        var finishDateError = document.getElementById("finishdate-error");
+        var courseNameError = document.getElementById("coursename-error");
+
+        // Clear previous error messages
+        courseCodeError.innerHTML = "";
+        teacherIdError.innerHTML = "";
+        startDateError.innerHTML = "";
+        finishDateError.innerHTML = "";
+        courseNameError.innerHTML = "";
+
+        // Validate each field and prevent form submission if invalid
+        if (courseCode === "") {
+            // Prevent form submission and display error for course code
+            event.preventDefault();
+            courseCodeError.innerHTML = "<p class='text-danger'>Course code cannot be empty.</p>";
+        }
+        if (teacherId === "") {
+            // Prevent form submission and display error for teacher ID
+            event.preventDefault();
+            teacherIdError.innerHTML = "<p class='text-danger'>Teacher Id cannot be empty.</p>";
+        }
+        if (startDate === "") {
+            // Prevent form submission and display error for start date
+            event.preventDefault();
+            startDateError.innerHTML = "<p class='text-danger'>Course start date cannot be empty.</p>";
+        }
+        if (finishDate === "") {
+            // Prevent form submission and display error for finish date
+            event.preventDefault();
+            finishDateError.innerHTML = "<p class='text-danger'>Course finish date cannot be empty.</p>";
+        }
+        if (courseName === "") {
+            // Prevent form submission and display error for course name
+            event.preventDefault();
+            courseNameError.innerHTML = "<p class='text-danger'>Course name cannot be empty.</p>";
+        }
+    })
+</script>
+*@ 
+
+

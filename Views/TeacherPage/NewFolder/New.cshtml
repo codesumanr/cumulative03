@@ -1,0 +1,141 @@
+﻿<h1 class="text-center mb-4">Add Teacher Details</h1>
+
+<!-- Navigation to go back to the teachers list -->
+<nav class="mb-4">
+	<a class="nav-link" href="/TeacherPage/List">Back To Teachers</a>
+</nav>
+
+<div class="container shadow-lg p-5 m-4 bg-light rounded">
+	<!-- Teacher first name input field -->
+	<div class="mb-3">
+		<label for="TeacherFname" class="form-label">First Name</label>
+		<input type="text" name="TeacherFname" id="TeacherFname" class="form-control" />
+		<div id="fname-error"></div>
+	</div>
+
+	<!-- Teacher last name input field -->
+	<div class="mb-3">
+		<label for="TeacherLname" class="form-label">Last Name</label>
+		<input type="text" name="TeacherLname" id="TeacherLname" class="form-control" />
+		<div id="lname-error"></div>
+	</div>
+
+	<!-- Teacher employee number input field -->
+	<div class="mb-3">
+		<label for="EmployeeNumber" class="form-label">Employee Number</label>
+		<input type="text" name="EmployeeNumber" id="EmployeeNumber" class="form-control" />
+		<div id="employeenumber-error"></div>
+	</div>
+
+	<!-- Teacher hire date input field -->
+	<div class="mb-3">
+		<label for="HireDate" class="form-label">Hire Date</label>
+		<input type="date" name="HireDate" id="HireDate" class="form-control" />
+		<div id="hiredate-error"></div>
+	</div>
+
+	<!-- Teacher salary input field -->
+	<div class="mb-3">
+		<label for="Salary" class="form-label">Salary</label>
+		<input type="number" name="Salary" id="Salary" step="0.01" class="form-control" />
+		<div id="salary-error"></div>
+	</div>
+
+	<!-- Submit button for adding teacher -->
+	<div class="text-center">
+		<input type="submit" value="Add Teacher" class="btn btn-primary btn-lg" onclick="AddTeacher()" />
+	</div>
+</div>
+
+<script>
+	// Function to handle the adding of a teacher by sending a POST request
+    function AddTeacher() {
+        var URL = "/api/Teacher/AddTeacher/";  // API endpoint for adding a teacher
+
+        // Get input values from the form
+        var TeacherFname = document.getElementById('TeacherFname').value.trim();
+        var TeacherLname = document.getElementById('TeacherLname').value.trim();
+        var EmployeeNumber = document.getElementById('EmployeeNumber').value.trim();
+        var HireDate = document.getElementById('HireDate').value.trim();
+        var Salary = document.getElementById('Salary').value.trim();
+
+        // Regex pattern for validating employee number format
+        const employeeNumberPattern = /^T\d{3}$/;
+        const currentDate = new Date();  // Current date for validation
+
+        // Get error elements from DOM to display validation messages
+        var teacherFNameError = document.getElementById("fname-error");
+        var teacherLNameError = document.getElementById("lname-error");
+        var employeeNumberError = document.getElementById("employeenumber-error");
+        var hireDateError = document.getElementById("hiredate-error");
+        var salaryError = document.getElementById("salary-error");
+
+        // Clear previous error messages
+        teacherFNameError.innerHTML = "";
+        teacherLNameError.innerHTML = "";
+        employeeNumberError.innerHTML = "";
+        hireDateError.innerHTML = "";
+        salaryError.innerHTML = "";
+
+        // Validation flag to track form validity
+        var isValid = true;
+
+        // Perform validation checks on the input fields
+        if (TeacherFname === "") {
+            teacherFNameError.innerHTML = "<p class='text-danger'>Teacher first name cannot be empty.</p>";
+            isValid = false;
+        }
+        if (TeacherLname === "") {
+            teacherLNameError.innerHTML = "<p class='text-danger'>Teacher last name cannot be empty.</p>";
+            isValid = false;
+        }
+        if (EmployeeNumber === "") {
+            employeeNumberError.innerHTML = "<p class='text-danger'>Employee number cannot be empty.</p>";
+            isValid = false;
+        } 
+        else if (!employeeNumberPattern.test(EmployeeNumber)) {
+            employeeNumberError.innerHTML = "<p class='text-danger'>Employee number should start with 'T' followed by 3 digits. Eg: T123</p>";
+            isValid = false;
+        }
+        if (HireDate === "") {
+            hireDateError.innerHTML = "<p class='text-danger'>Hire Date cannot be empty.</p>";
+            isValid = false;
+        } 
+        else if (new Date(HireDate) > currentDate) {
+            hireDateError.innerHTML = "<p class='text-danger'>Hire Date cannot be in the future.</p>";
+            isValid = false;
+        }
+        if (Salary === "") {
+            salaryError.innerHTML = "<p class='text-danger'>Salary cannot be empty.</p>";
+            isValid = false;
+        } 
+        else if (Salary < 0) {
+            salaryError.innerHTML = "<p class='text-danger'>Salary cannot be less than 0.</p>";
+            isValid = false;
+        }
+
+        // Proceed with sending the data if all validations pass
+        if (isValid) {
+            var TeacherData = {
+                "TeacherFname": TeacherFname,
+                "TeacherLname": TeacherLname,
+                "EmployeeNumber": EmployeeNumber,
+                "HireDate": HireDate,
+                "Salary": Salary
+            };
+
+            var rq = new XMLHttpRequest();
+            rq.open("POST", URL, true);
+            rq.setRequestHeader("Content-Type", "application/json");
+            rq.onreadystatechange = function () {
+                if (rq.readyState === 4 && rq.status === 200) {
+                    var TeacherId = rq.responseText;  // Get the teacher ID from the response
+                    window.location = "/TeacherPage/Show/" + TeacherId;  // Redirect to teacher details page
+                }
+            };
+            rq.send(JSON.stringify(TeacherData));  // Send the teacher data as JSON
+        }
+    }
+</script>
+
+   

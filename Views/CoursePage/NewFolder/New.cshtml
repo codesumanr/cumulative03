@@ -1,0 +1,140 @@
+﻿﻿<h2 class="text-center mb-4">Add Course Details</h2>
+
+<!-- Back to courses -->
+<nav class="mb-4">
+    <a class="nav-link" href="/CoursePage/List">Back To Courses</a>
+</nav>
+
+<!-- Add Course Form-->
+<div class="container shadow-lg p-5 m-4 bg-light rounded">
+    <!-- Course code-->
+    <div class="mb-3">
+        <label for="CourseCode" class="form-label">Course Code</label>
+        <input type="text" name="CourseCode" id="CourseCode" class="form-control" />
+        <div id="coursecode-error"></div>
+    </div>
+
+    <!-- Teacher id-->
+    <div class="mb-3">
+        <label for="TeacherId" class="form-label">Teacher Id</label>
+        <input type="number" name="TeacherId" id="TeacherId" class="form-control" />
+        <div id="teacherid-error"></div>
+    </div>
+
+    <!-- Course start date-->
+    <div class="mb-3">
+        <label for="StartDate" class="form-label">Start Date</label>
+        <input type="date" name="StartDate" id="StartDate" class="form-control" />
+        <div id="startdate-error"></div>
+    </div>
+
+    <!-- Course finish date-->
+    <div class="mb-3">
+        <label for="FinishDate" class="form-label">Finish Date</label>
+        <input type="date" name="FinishDate" id="FinishDate" class="form-control" />
+        <div id="finishdate-error"></div>
+    </div>
+
+    <!-- Course name-->
+    <div class="mb-3">
+        <label for="CourseName" class="form-label">Course Name</label>
+        <input type="text" name="CourseName" id="CourseName" class="form-control" />
+        <div id="coursename-error"></div>
+    </div>
+
+    <!-- Submit button -->
+    <div class="text-center">
+        <input type="submit" value="Add Course" class="btn btn-primary btn-lg" onclick="AddCourse()" />
+    </div>
+</div>
+
+<script>
+    // goal: send a request which looks like this:
+    // POST : https://localhost:xx/api/Course/AddCourse
+    // with POST data of courseCode, teacherId, startDate, finishDate, courseName
+    // note: this can be factored to a separate JS file
+
+    function AddCourse() {
+        var URL = "/api/Course/AddCourse/";
+
+        // Get input values
+        var CourseCode = document.getElementById('CourseCode').value.trim();
+        var TeacherId = document.getElementById('TeacherId').value.trim();
+        var StartDate = document.getElementById('StartDate').value.trim();
+        var FinishDate = document.getElementById('FinishDate').value.trim();
+        var CourseName = document.getElementById('CourseName').value.trim();
+
+        // Get current date
+        const currentDate = new Date();
+
+        // Get error elements from DOM
+        var courseCodeError = document.getElementById("coursecode-error");
+        var teacherIdError = document.getElementById("teacherid-error");
+        var startDateError = document.getElementById("startdate-error");
+        var finishDateError = document.getElementById("finishdate-error");
+        var courseNameError = document.getElementById("coursename-error");
+
+        // Clear previous error messages
+        courseCodeError.innerHTML = "";
+        teacherIdError.innerHTML = "";
+        startDateError.innerHTML = "";
+        finishDateError.innerHTML = "";
+        courseNameError.innerHTML = "";
+
+        // Validation flag
+        let isValid = true;
+
+        // Perform validation
+        if (CourseCode === "") {
+            courseCodeError.innerHTML = "<p class='text-danger'>Course code cannot be empty.</p>";
+            isValid = false;
+        }
+        if (TeacherId === "") {
+            teacherIdError.innerHTML = "<p class='text-danger'>Teacher ID cannot be empty.</p>";
+            isValid = false;
+        }
+        if (StartDate === "") {
+            startDateError.innerHTML = "<p class='text-danger'>Course start date cannot be empty.</p>";
+            isValid = false;
+        } else if (new Date(StartDate) > currentDate) {
+            startDateError.innerHTML = "<p class='text-danger'>Start Date cannot be in the future.</p>";
+            isValid = false;
+        }
+        if (FinishDate === "") {
+            finishDateError.innerHTML = "<p class='text-danger'>Course finish date cannot be empty.</p>";
+            isValid = false;
+        }
+        else if (new Date(FinishDate) > currentDate) {
+            finishDateError.innerHTML = "<p class='text-danger'>Finish Date cannot be in the future.</p>";
+            isValid = false;
+        }
+        if (CourseName === "") {
+            courseNameError.innerHTML = "<p class='text-danger'>Course name cannot be empty.</p>";
+            isValid = false;
+        }
+
+        // Only proceed if all fields are valid
+        if (isValid) {
+            var CourseData = {
+                "CourseCode": CourseCode,
+                "TeacherId": TeacherId,
+                "StartDate": StartDate,
+                "FinishDate": FinishDate,
+                "CourseName": CourseName
+            };
+
+            var rq = new XMLHttpRequest();
+            rq.open("POST", URL, true);
+            rq.setRequestHeader("Content-Type", "application/json");
+            rq.onreadystatechange = function () {
+                if (rq.readyState === 4 && rq.status === 200) {
+                    var CourseId = rq.responseText;
+                    window.location = "/CoursePage/Show/" + CourseId;
+                }
+            };
+            rq.send(JSON.stringify(CourseData));
+        }
+    }
+
+
+</script>
